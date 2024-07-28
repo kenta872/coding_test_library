@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.company.library.infrastructure.mapper.EmployeeMapper">
+    <resultMap id="employeeResultMap" type="com.company.library.secondary.model.EmployeeEntity">
+        <id property="id" column="employeeId" />
+        <result property="name" column="name"/>
+        <collection property="bookEntityList" ofType="com.company.library.secondary.model.BookEntity">
+            <id property="id" column="bookId"/>
+            <result property="title" column="title"/>
+            <result property="borrowed" column="borrowed"/>
+        </collection>
+    </resultMap>
+
+    <select id="findEmployeeByEmployeeId" resultMap="employeeResultMap">
+        SELECT
+            emp.`id` as employeeId,
+            emp.`name` as name,
+            book.`id` as bookId,
+            book.`title` as title,
+            book.`borrowed` as borrowed
+        FROM
+            employee emp
+            LEFT OUTER JOIN borrowed_book bb ON emp.`id` = bb.employee_id
+            LEFT OUTER JOIN book ON bb.book_id = book.`id`
+        WHERE
+            emp.`id` = #{employeeId}
+    </select>
+
+    <select id="findTest" resultType="String">
+        SELECT
+            emp.`name` as name
+        FROM
+            employee emp
+            LEFT OUTER JOIN borrowed_book bb ON emp.`id` = bb.employee_id
+            LEFT OUTER JOIN book ON bb.book_id = book.`id`
+        WHERE
+            emp.`id` = #{employeeId}
+    </select>
+
+    <insert id="insertBorrowedBook">
+        INSERT INTO borrowed_book (employee_id, book_id)
+        VALUES (
+            #{employeeId},
+            #{bookId}
+        )
+    </insert>
+
+    <delete id="deleteBorrowedBook">
+        DELETE FROM borrowed_book
+        WHERE
+            employee_id = #{employeeId} AND
+            book_id = #{bookId}
+    </delete>
+
+    <delete id="deleteBorrowedBookByEmployeeId">
+        DELETE FROM borrowed_book
+        WHERE
+            employee_id = #{employeeId}
+    </delete>
+</mapper>
