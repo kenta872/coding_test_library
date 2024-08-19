@@ -22,7 +22,7 @@ jobs:
           java-version: '17'
 
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: ./library/gradlew clean build
 
       - name: Docker meta
         id: meta
