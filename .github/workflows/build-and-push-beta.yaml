@@ -1,0 +1,39 @@
+name: deploy-pr
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  REGISTORY: ghcr.io
+jobs:
+  build-and-push-image:
+    outputs:
+      IMAGE_FULL_NAME: ${{ steps.meta.outputs.tags }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTORY }}/${{ github.repository }}/sample-app
+
+      - name: Login to github Container Registory
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTORY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: app
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          secrets: |
+            GIT_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
