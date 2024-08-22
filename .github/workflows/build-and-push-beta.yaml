@@ -42,23 +42,23 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-#      - name: build and push
-#        uses: docker/build-push-action@v6
-#        with:
-#          context: library
-#          push: true
-#          tags: ${{ steps.meta.outputs.tags }}
-#          labels: ${{ steps.meta.outputs.labels }}
-#          secrets: |
-#            GIT_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
-      - name: Extract tag
-        id: extract_tag
-        run: echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-
-      - name: Build Docker image
-        run: |
-          docker build -t ${{ env.REGISTRY }}/${{ github.repository }}:${{ env.TAG }} .
-
-      - name: Push Docker image
-        run: |
-          docker push ${{ env.REGISTRY }}/${{ github.repository }}:${{ env.TAG }}
+      - name: build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: library
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          secrets: |
+            GIT_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
+#      - name: Extract tag
+#        id: extract_tag
+#        run: echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+#
+#      - name: Build Docker image
+#        run: |
+#          docker build -t ${{ env.REGISTRY }}/${{ github.repository }}:${{ env.TAG }} .
+#
+#      - name: Push Docker image
+#        run: |
+#          docker push ${{ env.REGISTRY }}/${{ github.repository }}:${{ env.TAG }}
